@@ -7,6 +7,9 @@ import {upvoteElement, deleteElement} from '../../actions/articles';
 import {prettyDate} from '../../services/functions';
 import './ArticleMetaBottom.css';
 import Cookies from 'js-cookie';
+import VotingSlider from '../../components/VotingSlider';
+import ReactDOM from 'react-dom';
+
 
 const styles = {
   barIcon: {
@@ -32,26 +35,36 @@ class ArticleMetaBottom extends Component {
     super(props);
     this.state = {
       isDeleting: false,
-      isUpvoted: false
+      isUpvoted: false,
+      showVotingSlider: true
     };
+
+    this.container = document.createElement('div');
+    document.body.appendChild(this.container).className = 'vote-container';
+  }
+
+  toggleVotingSlider () {
+    this.setState({showVotingSlider: !this.state.showVotingSlider});
   }
   //upvote article or comment
   onUpvoteClick = async () => {
-    const {data, dispatch, onUpdate} = this.props;
 
-    //if already voted, immediately return - maybe implement unvoting later, if needed
-    if (data.isVoted) {
-      return;
-    }
-    //upvote with 10000 - which equals 100%
-    try {
-      this.setState({isUpvoted: true});
-      await dispatch(upvoteElement(data.author, data.permlink, 10000));
-      //on successful update, reload article or article list
-      onUpdate();
-    } catch (err) {
-      //error handled in upvoteElement action
-    }
+
+    // const {data, dispatch, onUpdate} = this.props;
+
+    // //if already voted, immediately return - maybe implement unvoting later, if needed
+    // if (data.isVoted) {
+    //   return;
+    // }
+    // //upvote with 10000 - which equals 100%
+    // try {
+    //   this.setState({isUpvoted: true});
+    //   await dispatch(upvoteElement(data.author, data.permlink, 10000));
+    //   //on successful update, reload article or article list
+    //   onUpdate();
+    // } catch (err) {
+    //   //error handled in upvoteElement action
+    // }
   };
   //delete article or comment - will get called after confirmation
   onDeleteClick = async () => {
@@ -67,6 +80,10 @@ class ArticleMetaBottom extends Component {
       //error handled in deleteElement action
     }
   };
+  componentWillMount() {
+
+  }
+
   render() {
     const {isDeleting, isUpvoted} = this.state;
     const {data, isComment, isArticleDetail, onEditClick, onReplyClick, isEditMode} = this.props;
@@ -97,18 +114,16 @@ class ArticleMetaBottom extends Component {
       <Row  type="flex" justify="space-between" className="article-meta" style={{ background: isComment ? 'transparent' : '#fff', width: '100%',padding: '7px'}}>
          <Col style={{display: 'flex'}}>
           <Col>
-            <IconText type="clock-circle-o" text={prettyDate(data.postedAt)} />
-          </Col>
-          <Col>
             <Divider type="vertical" />
           </Col>
           <Col>
             <span
               className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : ''}`}
-              onClick={this.onUpvoteClick}>
-              <i style={{...styles.barIcon, color: upvoteIconColor}} className="fas fa-thumbs-up"/>
+              onClick={this.onUpvoteClick} >
+              <i style={{...styles.barIcon, color: upvoteIconColor, position: 'relative'}} className="fas fa-thumbs-up"/>
               <strong>{isUpvoted ? (data.votesCount + 1) : data.votesCount}</strong>
             </span>
+            
           </Col>
           <Col>
             <Divider type="vertical" />
@@ -147,6 +162,9 @@ class ArticleMetaBottom extends Component {
             {isDeleting && <Spin size="small" />}
           </span>
         </Col>
+      </Col>
+      <Col>
+      {this.state.showVotingSlider && <VotingSlider/>}
       </Col>
         
       </Row>

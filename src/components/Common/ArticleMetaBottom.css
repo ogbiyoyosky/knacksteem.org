@@ -9,3 +9,15 @@
 .action-links > a:not(:last-child) {
   margin-right: 5px;
 }
+
+.vote-container {
+  position: absolute;
+  width: 50%;
+  top: 320px;
+  left: 50px;
+  z-index: 1000
+}
+
+.voting-container {
+  width: 100%
+}
