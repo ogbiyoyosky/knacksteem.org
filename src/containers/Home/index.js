@@ -87,9 +87,9 @@ class Home extends Component {
       <Row style={{width: '75%', flexDirection: 'row'}} type="flex" className="home-container">
 
           <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-            {articles.data.map((data) => {
+            {articles.data.map((data, index) => {
               return (
-                <ArticleListItem key={data.permlink} data={data} user={user} onUpvoteSuccess={this.loadArticles} />
+                <ArticleListItem key={data.permlink} index={index} data={data} user={user} onUpvoteSuccess={this.loadArticles} />
               );
             })}
           </Row>

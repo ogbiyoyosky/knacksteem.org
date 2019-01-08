@@ -14,5 +14,5 @@ export default combineReducers({
   user: userReducer,
   stats: statsReducer,
   app: appReducer,
-  votingSlider: votingSliderReducer
+  votingSlider: votingSliderReducer,
 });

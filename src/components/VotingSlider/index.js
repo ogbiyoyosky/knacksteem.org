@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import {connect} from 'react-redux';
 import './index.css';
 import store from '../../store';
 import {votePowerChange} from '../../actions/votingSlider';
 import { Slider, Icon, Button } from 'antd';
 import getVoteWorth from './getVoteWorth';
+
 
 const marks = {
   0: '0%',
@@ -12,7 +14,7 @@ const marks = {
   75: '75%',
   100: '100%'
 };
-export default class VotingSlider extends Component {
+class VotingSlider extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -22,6 +24,7 @@ export default class VotingSlider extends Component {
       maxVoteWorth: 0
     };
   }
+
   async componentDidMount() {
     await this.setState({
       maxVoteWorth: await getVoteWorth({
@@ -46,12 +49,13 @@ export default class VotingSlider extends Component {
     return `${this.state.votePower / 100}% $${this.state.voteWorth}`;
   }
   render() {
+    const {onCancelSlider,onClickUpvote} = this. props
     return (
       <div className="voting-container">
         <div className="voting-header-container">
           <span>
-            <button className="voting-button-header"><Icon style={{color: '#22419c'}} type="check-circle" /> Confirm</button>
-            <button className="voting-button-header"><Icon type="close-circle" /> Cancel</button>
+            <button onClick={e => onClickUpvote()} className="voting-button-header"><Icon style={{color: '#22419c'}} type="check-circle" /> Confirm</button>
+            <button onClick={(e)=> onCancelSlider()} className="voting-button-header"><Icon type="close-circle" /> Cancel</button>
           </span>
           <span>{this.state.voteWorth === 0 ? <div className="loader"/> : `$${this.state.maxVoteWorth}`}</span>
         </div>
@@ -68,3 +72,10 @@ export default class VotingSlider extends Component {
     );
   }
 }
+const mapStateToProps = (state) => {
+  return {
+    metaBottom: state.metaBottom 
+  }
+}
+
+export default connect(mapStateToProps)(VotingSlider);

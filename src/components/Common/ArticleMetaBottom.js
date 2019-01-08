@@ -8,7 +8,7 @@ import {prettyDate} from '../../services/functions';
 import './ArticleMetaBottom.css';
 import Cookies from 'js-cookie';
 import VotingSlider from '../../components/VotingSlider';
-import ReactDOM from 'react-dom';
+import { toggleSlider } from '../../actions/metaBottom'
 
 
 const styles = {
@@ -38,14 +38,10 @@ class ArticleMetaBottom extends Component {
       isUpvoted: false,
       showVotingSlider: true
     };
-
-    this.container = document.createElement('div');
-    document.body.appendChild(this.container).className = 'vote-container';
+    console.log(this.props);
   }
 
-  toggleVotingSlider () {
-    this.setState({showVotingSlider: !this.state.showVotingSlider});
-  }
+  
   //upvote article or comment
   onUpvoteClick = async () => {
 
@@ -80,13 +76,14 @@ class ArticleMetaBottom extends Component {
       //error handled in deleteElement action
     }
   };
+
   componentWillMount() {
 
   }
 
   render() {
     const {isDeleting, isUpvoted} = this.state;
-    const {data, isComment, isArticleDetail, onEditClick, onReplyClick, isEditMode} = this.props;
+    const {data, isComment, isArticleDetail, onEditClick, onReplyClick, isEditMode, onHandleUpvote} = this.props;
     
     const isAuthor = (Cookies.get('username') === data.author);
     const commentCount = isComment ? data.replies.length : data.commentsCount;
@@ -113,13 +110,14 @@ class ArticleMetaBottom extends Component {
     return (
       <Row  type="flex" justify="space-between" className="article-meta" style={{ background: isComment ? 'transparent' : '#fff', width: '100%',padding: '7px'}}>
          <Col style={{display: 'flex'}}>
+
           <Col>
             <Divider type="vertical" />
           </Col>
           <Col>
             <span
               className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : ''}`}
-              onClick={this.onUpvoteClick} >
+              onClick={e=> onHandleUpvote()} >
               <i style={{...styles.barIcon, color: upvoteIconColor, position: 'relative'}} className="fas fa-thumbs-up"/>
               <strong>{isUpvoted ? (data.votesCount + 1) : data.votesCount}</strong>
             </span>
@@ -162,11 +160,7 @@ class ArticleMetaBottom extends Component {
             {isDeleting && <Spin size="small" />}
           </span>
         </Col>
-      </Col>
-      <Col>
-      {this.state.showVotingSlider && <VotingSlider/>}
-      </Col>
-        
+      </Col>  
       </Row>
     );
   }
@@ -189,4 +183,10 @@ ArticleMetaBottom.defaultProps = {
   isEditMode: false
 };
 
-export default connect()(ArticleMetaBottom);
+const mapStateToProps = (state) => {
+  return {
+    metaBottom: state.metaBottom 
+  }
+}
+
+export default connect(mapStateToProps)(ArticleMetaBottom);

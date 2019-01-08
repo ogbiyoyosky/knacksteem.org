@@ -28,7 +28,8 @@ class ArticleDetail extends Component {
       isEditMode: false,
       isReplyMode: false,
       limit: 3,
-      disableShowMore: false
+      disableShowMore: false,
+      isSliderVisible: true
     };
   };
   componentDidMount() {
@@ -68,6 +69,12 @@ class ArticleDetail extends Component {
     }
   };
 
+  cancelSlider = () =>  {
+    this.setState({
+      isSliderVisible: false
+    })
+  }
+
   handleImageInserted = (blob, callback, errorCallback) => {
     const formData = new FormData();
     formData.append('files', blob);
@@ -103,6 +110,7 @@ class ArticleDetail extends Component {
       isEditMode: true
     });
   };
+
   onReplyClick = () => {
     this.setState({
       isReplyMode: true
@@ -128,7 +136,6 @@ class ArticleDetail extends Component {
   };
   render() {
     const {data, isLoading, isEditMode, isReplyMode} = this.state;
-    const {votingSlider} = this.props;
 
     //show spinner/loader while loading article from the backend
     if (isLoading) {
@@ -147,13 +154,9 @@ class ArticleDetail extends Component {
               <Divider/>
               {isEditMode && <Editor isEdit={true} parentPermlink={data.permlink} parentAuthor={data.author} articleData={data} isComment={false}  onImageInserted={this.handleImageInserted}  />}
               {!isEditMode && <ReactMarkdown source={data.description} />}
-              { votingSlider.isVotingSliderVisible &&
-              <div>
-                <VotingSlider/>
-              </div>
-              }
               <div className="article-footer">
                 <ArticleMetaBottom data={data} onUpdate={this.getArticle} isArticleDetail onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isEditMode={isEditMode} />
+                {this.state.isSliderVisible && <VotingSlider onCancelSlider={this.cancelSlider} onConfirmClick={this.confirmSlider}/>}
               </div>
             </Row>
               <Divider/>
