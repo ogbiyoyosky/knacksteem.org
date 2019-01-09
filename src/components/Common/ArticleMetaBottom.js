@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import IconText from '../Common/IconText';
 import {Popconfirm, Spin, Row, Col, Divider} from 'antd';
-import {upvoteElement, deleteElement} from '../../actions/articles';
+import { deleteElement} from '../../actions/articles';
 import {prettyDate} from '../../services/functions';
 import './ArticleMetaBottom.css';
 import Cookies from 'js-cookie';
 import VotingSlider from '../../components/VotingSlider';
-import { toggleSlider } from '../../actions/metaBottom'
+
 
 
 const styles = {
@@ -38,30 +38,9 @@ class ArticleMetaBottom extends Component {
       isUpvoted: false,
       showVotingSlider: true
     };
-    console.log(this.props);
+  
   }
 
-  
-  //upvote article or comment
-  onUpvoteClick = async () => {
-
-
-    // const {data, dispatch, onUpdate} = this.props;
-
-    // //if already voted, immediately return - maybe implement unvoting later, if needed
-    // if (data.isVoted) {
-    //   return;
-    // }
-    // //upvote with 10000 - which equals 100%
-    // try {
-    //   this.setState({isUpvoted: true});
-    //   await dispatch(upvoteElement(data.author, data.permlink, 10000));
-    //   //on successful update, reload article or article list
-    //   onUpdate();
-    // } catch (err) {
-    //   //error handled in upvoteElement action
-    // }
-  };
   //delete article or comment - will get called after confirmation
   onDeleteClick = async () => {
     const {data, dispatch, onUpdate} = this.props;
@@ -116,12 +95,14 @@ class ArticleMetaBottom extends Component {
           </Col>
           <Col>
             <span
-              className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : ''}`}
+              className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : 'inactive'}`}
               onClick={e=> onHandleUpvote()} >
-              <i style={{...styles.barIcon, color: upvoteIconColor, position: 'relative'}} className="fas fa-thumbs-up"/>
+              <i style={{...styles.barIcon, position: 'relative'}} className={`fas fa-thumbs-up ${(data.isVoted || isUpvoted) ? 'active' : 'inactive'}`}/>
               <strong>{isUpvoted ? (data.votesCount + 1) : data.votesCount}</strong>
             </span>
-            
+          </Col>
+          <Col>
+            <span>${data.totalPayout}</span>
           </Col>
           <Col>
             <Divider type="vertical" />

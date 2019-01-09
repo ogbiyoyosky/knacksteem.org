@@ -50,30 +50,7 @@ class ArticleListItem extends React.Component {
     })
   }
 
-  //upvote article or comment
-  onUpvoteClick = async () => {
-
-
-    const {data, dispatch, onUpdate} = this.props;
-
-    //if already voted, immediately return - maybe implement unvoting later, if needed
-    if (data.isVoted) {
-      return;
-    }
-    //upvote with 10000 - which equals 100%
-    try {
-      
-      await dispatch(upvoteElement(data.author, data.permlink, 10000));
-      this.setState({isUpvoted: true, isSliderVisible: false});
-      //on successful update, reload article or article list
-      onUpdate();
-
-      
-    } catch (err) {
-      //error handled in upvoteElement action
-    }
-  };
-
+  
   //reject the current article
   onRejectClick = () => { 
     const {dispatch, status, data} = this.props
@@ -81,7 +58,8 @@ class ArticleListItem extends React.Component {
   };
 
   render () {
-    const {data, index, status, onUpvoteSuccess, user} = this.props;
+    const {data, index, status, onUpvoteSuccess, user, update} = this.props;
+    const {isUpvoted, isSliderVisible} = this.state;
     return (
       <Row className="ant-list-item list-item-article">
         <Row type="flex" align="middle">
@@ -122,7 +100,7 @@ class ArticleListItem extends React.Component {
           </Col>
         </Row>
         <ArticleMetaBottom data={data} index={index} onHandleUpvote={this.showSlider} onUpdate={onUpvoteSuccess} />
-        {this.state.isSliderVisible && <VotingSlider data={data} onClickUpvote={this.onUpvoteClick} index={index} onUpdate={onUpvoteSuccess} onCancelSlider={this.cancelSlider}/>}
+        {isSliderVisible && <VotingSlider onUpdate={update} data={data} isUpvoted={isUpvoted}  index={index} onUpdate={onUpvoteSuccess} onCancelSlider={this.cancelSlider}/>}
         {((status === 'pending' || (data.moderation.approved && user.isSupervisor)) && data.author !== user.username) &&
           <div className="mod-functions">
               <Button size="small" type="primary" onClick={e => this.onReserveClick()}>Reserve for review</Button>

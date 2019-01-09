@@ -4,6 +4,7 @@ import './index.css';
 import store from '../../store';
 import {votePowerChange} from '../../actions/votingSlider';
 import { Slider, Icon, Button } from 'antd';
+import {upvoteElement} from '../../actions/articles';
 import getVoteWorth from './getVoteWorth';
 
 
@@ -48,13 +49,40 @@ class VotingSlider extends Component {
   handleTip = () => {
     return `${this.state.votePower / 100}% $${this.state.voteWorth}`;
   }
+
+  //upvote article or comment
+  onUpvoteClick = async () => {
+
+
+    const {data, dispatch, onUpdate} = this.props;
+    
+
+    //if already voted, immediately return - maybe implement unvoting later, if needed
+    if (data.isVoted) {
+      
+      return;
+    }
+    //upvote with 10000 - which equals 100%
+    try {
+      
+      await dispatch(upvoteElement(data.author, data.permlink, this.state.votePower ));
+      //on successful update, reload article or article list
+      onUpdate();
+      console.log(data)
+
+      
+    } catch (err) {
+      //error handled in upvoteElement action
+    }
+  };
+
   render() {
-    const {onCancelSlider,onClickUpvote} = this. props
+    const {onCancelSlider} = this. props
     return (
       <div className="voting-container">
         <div className="voting-header-container">
           <span>
-            <button onClick={e => onClickUpvote()} className="voting-button-header"><Icon style={{color: '#22419c'}} type="check-circle" /> Confirm</button>
+            <button onClick={e => this.onUpvoteClick()} className="voting-button-header"><Icon style={{color: '#22419c'}} type="check-circle" /> Confirm</button>
             <button onClick={(e)=> onCancelSlider()} className="voting-button-header"><Icon type="close-circle" /> Cancel</button>
           </span>
           <span>{this.state.voteWorth === 0 ? <div className="loader"/> : `$${this.state.maxVoteWorth}`}</span>

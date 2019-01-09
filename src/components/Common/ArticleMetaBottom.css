@@ -6,6 +6,10 @@
   color: #1890ff;
 }
 
+.active {
+  color: #1890ff;
+}
+
 .action-links > a:not(:last-child) {
   margin-right: 5px;
 }
